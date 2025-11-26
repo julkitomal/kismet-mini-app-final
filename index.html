@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KISMET x BASEHOUSE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400&family=Space+Grotesk:wght@400;700&family=VT323&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <style>
+      /* Custom scrollbar hide for immersive feel */
+      body, html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden; /* CRITICAL: No Scroll */
+        cursor: none; /* Hide default cursor */
+        background-color: black;
+      }
+      
+      .cursor-interactive {
+        cursor: none;
+      }
+
+      /* Optimization classes */
+      .will-change-transform {
+        will-change: transform;
+      }
+      
+      /* Typography Utilites */
+      .text-balance {
+        text-wrap: balance;
+      }
+      
+      /* Smooth font rendering */
+      * {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      ::selection {
+        background: rgba(255, 255, 255, 0.9);
+        color: black;
+      }
+
+      .image-pixelated {
+        image-rendering: pixelated;
+      }
+
+      /* SHAPE MORPHING ANIMATION */
+      @keyframes morph {
+        0% { 
+          clip-path: circle(50%); 
+          border-radius: 50%; 
+        }
+        14% { 
+          /* Diamond */
+          clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); 
+          border-radius: 0; 
+        }
+        28% { 
+          /* Triangle */
+          clip-path: polygon(50% 0%, 0% 100%, 100% 100%); 
+          border-radius: 0; 
+        }
+        42% { 
+          /* Star */
+          clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); 
+          border-radius: 0; 
+        }
+        56% { 
+          /* Hexagon */
+          clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); 
+          border-radius: 0; 
+        }
+        70% { 
+           /* Inverted Triangle */
+           clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+           border-radius: 0;
+        }
+        84% { 
+           /* Cross */
+           clip-path: polygon(20% 0%, 80% 0%, 80% 20%, 100% 20%, 100% 80%, 80% 80%, 80% 100%, 20% 100%, 20% 80%, 0% 80%, 0% 20%, 20% 20%);
+           border-radius: 0;
+        }
+        100% { 
+          clip-path: circle(50%); 
+          border-radius: 50%; 
+        }
+      }
+
+      .morph-shape {
+        animation: morph 12s infinite ease-in-out;
+      }
+
+      /* Different timing offsets for chaos */
+      .delay-1 { animation-delay: 0s; }
+      .delay-2 { animation-delay: -2s; }
+      .delay-3 { animation-delay: -5s; }
+      .delay-4 { animation-delay: -7s; }
+      .delay-5 { animation-delay: -9s; }
+
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24",
+    "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.0/client",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "@farcaster/frame-sdk": "https://esm.sh/@farcaster/frame-sdk@0.0.32"
+  }
+}
+</script>
+</head>
+  <body class="bg-black text-white antialiased">
+    <div id="root" class="h-full w-full"></div>
+  </body>
+</html>
