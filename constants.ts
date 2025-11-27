@@ -83,7 +83,7 @@ export const ARTISTS: Record<ArtistId, Artist> = {
   },
   sulkian: {
     id: 'sulkian',
-    name: 'SULKIAN CORE',
+    name: 'SULKIAN',
     shortDescription: 'Biomecanoide Tech-Futurista',
     profileImage: 'https://i.postimg.cc/W1qTNBcZ/sulkian-profile.webp',
     creatorCoinLink: 'https://app.uniswap.org/explore/tokens/base/0x61d5a80fcf601b9adb95843f52cceec587acd1a0',

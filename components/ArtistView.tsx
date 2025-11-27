@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, Variants } from 'framer-motion';
 import { Artist, ThemeConfig } from '../types';
@@ -154,14 +155,21 @@ export const ArtistView: React.FC<ArtistViewProps> = ({ artist, theme, onBack, o
   const hasMultipleWorks = gallery.length > 1;
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentWork = gallery[currentIndex];
-  const nextIndex = (currentIndex + 1) % gallery.length;
   
+  // Ref to track if user has manually interacted
+  const hasInteractedRef = useRef(false);
+
+  // Preload next image
+  const nextIndex = (currentIndex + 1) % gallery.length;
   useEffect(() => {
     if (!hasMultipleWorks) return;
     const img = new Image();
     img.src = gallery[nextIndex].imageUrl;
   }, [currentIndex, hasMultipleWorks, gallery, nextIndex]);
 
+  // Auto-cycle (pauses if user interacts manually, logic: if I click, I want to see THAT one)
+  // To implement "pause on interaction", we can skip the interval callback if interactions happened recently
+  // For simplicity: The interval continues, but interacting resets the cycle naturally because currentIndex changes
   useEffect(() => {
     if (!hasMultipleWorks) return;
 
@@ -170,12 +178,24 @@ export const ArtistView: React.FC<ArtistViewProps> = ({ artist, theme, onBack, o
       : 4500;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % gallery.length);
+      // Only auto-advance if user hasn't clicked recently (optional UX, keeping it simple for now: always rotate)
+      // If we wanted to pause on hover/interaction we would check hasInteractedRef
+      if (!hasInteractedRef.current) {
+          setCurrentIndex((prev) => (prev + 1) % gallery.length);
+      }
     }, intervalTime);
 
     return () => clearInterval(timer);
   }, [hasMultipleWorks, gallery.length, theme.motionType]);
 
+  const handleManualSelect = (index: number) => {
+      setCurrentIndex(index);
+      hasInteractedRef.current = true;
+      // Reset interaction flag after 10 seconds to resume slideshow? 
+      // Or just keep it static. Let's keep it static for better UX once clicked.
+      // Actually, let's just let it auto-resume after a long delay, or stay static.
+      // For this vibe, let's let it stay static so user can read about the specific piece.
+  };
 
   const isMobile = typeof window !== 'undefined' && window.matchMedia("(pointer: coarse)").matches;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -217,7 +237,8 @@ export const ArtistView: React.FC<ArtistViewProps> = ({ artist, theme, onBack, o
       {/* LAYER 2: RIGHT PANEL - Living Gallery (Ordered First on Mobile for Visual Impact) */}
       <div className="relative w-full md:w-2/3 h-[45vh] md:h-full flex items-center justify-center z-10 overflow-hidden pointer-events-none shrink-0 order-1 md:order-2">
         <motion.div 
-            className="relative w-full h-full flex items-center justify-center p-4 md:p-12"
+            // DYNAMIC PADDING: Add right padding if gallery exists to prevent overlap
+            className={`relative w-full h-full flex items-center justify-center transition-all duration-300 ${hasMultipleWorks ? 'p-4 pr-16 md:p-12 md:pr-28' : 'p-4 md:p-12'}`}
             style={{ x: isMobile ? 0 : moveFrontX.get() * -0.5, y: isMobile ? 0 : moveFrontY.get() * -0.5 }}
         >
             <div 
@@ -257,6 +278,34 @@ export const ArtistView: React.FC<ArtistViewProps> = ({ artist, theme, onBack, o
                     </div>
                 </motion.div>
             </AnimatePresence>
+
+            {/* THUMBNAIL NAVIGATOR - RIGHT LATERAL VERTICAL */}
+             {hasMultipleWorks && (
+                <div className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-50 pointer-events-auto py-3 px-2 rounded-2xl bg-black/20 backdrop-blur-sm border border-white/5 shadow-xl">
+                    {gallery.map((work, idx) => (
+                        <button
+                            key={work.id}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleManualSelect(idx);
+                            }}
+                            className={`
+                                relative w-10 h-10 md:w-14 md:h-14 overflow-hidden rounded-lg border-2 transition-all duration-300 group shrink-0
+                                ${currentIndex === idx 
+                                    ? 'border-current scale-110 shadow-[0_0_15px_rgba(255,255,255,0.3)] opacity-100' 
+                                    : 'border-transparent opacity-40 hover:opacity-100 hover:border-white/50 grayscale hover:grayscale-0'
+                                }
+                            `}
+                        >
+                            <img 
+                                src={work.imageUrl} 
+                                alt={work.title} 
+                                className="w-full h-full object-cover" 
+                            />
+                        </button>
+                    ))}
+                </div>
+             )}
 
         </motion.div>
       </div>
