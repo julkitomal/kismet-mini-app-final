@@ -1,3 +1,4 @@
+
 import React, { useState, Suspense, lazy, useEffect, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BackgroundLayer } from './components/BackgroundLayer';
@@ -23,6 +24,7 @@ const preloadImages = (urls: string[]) => {
 const IntroLoader = ({ onComplete }: { onComplete: () => void }) => {
   const [progress, setProgress] = useState(0);
   const [logs, setLogs] = useState<string[]>([]);
+  const [videoError, setVideoError] = useState(false);
   const { user, isContextLoaded } = useFarcaster();
   
   // Cybernetic boot logs - Updated with Base Network references
@@ -93,6 +95,22 @@ const IntroLoader = ({ onComplete }: { onComplete: () => void }) => {
       exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
       transition={{ duration: 0.8, ease: "easeInOut" }}
     >
+      {/* VIDEO BACKGROUND LAYER */}
+      {!videoError && (
+        <div className="absolute inset-0 z-0">
+          <video 
+             autoPlay 
+             muted 
+             loop 
+             playsInline
+             className="w-full h-full object-cover opacity-40 grayscale contrast-125 mix-blend-screen"
+             src="/intro.mp4"
+             onError={() => setVideoError(true)}
+          />
+          <div className="absolute inset-0 bg-black/70" />
+        </div>
+      )}
+
       {/* Background Grid/Scanlines with Blue tint for Base */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(0,82,255,0.03),rgba(0,255,0,0.02),rgba(0,82,255,0.03))] z-0 bg-[length:100%_2px,3px_100%] pointer-events-none" />
       <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#0052FF]/30 via-black to-black" />
